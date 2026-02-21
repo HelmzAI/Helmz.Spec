@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package helmz.v1;
+
+option csharp_namespace = "Helmz.Spec.V1";
+
+import "google/protobuf/timestamp.proto";
+
+// RelayService handles pairing and room-based routing between
+// the mobile client and PC daemon through the relay server.
+service RelayService {
+  // Create a new room and get a pair code for the mobile client.
+  rpc CreateRoom(CreateRoomRequest) returns (CreateRoomResponse);
+
+  // Join an existing room using a pair code.
+  rpc JoinRoom(JoinRoomRequest) returns (JoinRoomResponse);
+
+  // Bidirectional stream for exchanging encrypted messages through the relay.
+  // The relay cannot read the contents — it just routes blobs by room.
+  rpc Tunnel(stream TunnelMessage) returns (stream TunnelMessage);
+}
+
+message CreateRoomRequest {
+  string daemon_id = 1;
+}
+
+message CreateRoomResponse {
+  string room_id = 1;
+  string pair_code = 2;
+  google.protobuf.Timestamp expires_at = 3;
+}
+
+message JoinRoomRequest {
+  string pair_code = 1;
+}
+
+message JoinRoomResponse {
+  string room_id = 1;
+  string daemon_id = 2;
+}
+
+// An encrypted message routed through the relay.
+// The relay sees only the room_id and opaque payload.
+message TunnelMessage {
+  string room_id = 1;
+  bytes payload = 2;
+  google.protobuf.Timestamp timestamp = 3;
+}

@@ -1,0 +1,80 @@
+syntax = "proto3";
+
+package helmz.v1;
+
+option csharp_namespace = "Helmz.Spec.V1";
+
+import "helmz/v1/types.proto";
+
+// DaemonService is the gRPC interface exposed by the Helmz PC daemon.
+// It provides full control over AI coding agent sessions.
+service DaemonService {
+  // Start a new agent session in the specified working directory.
+  rpc StartSession(StartSessionRequest) returns (StartSessionResponse);
+
+  // Stop a running agent session.
+  rpc StopSession(StopSessionRequest) returns (StopSessionResponse);
+
+  // List all active sessions on this daemon.
+  rpc ListSessions(ListSessionsRequest) returns (ListSessionsResponse);
+
+  // Send a command/prompt to a running agent session.
+  rpc SendCommand(SendCommandRequest) returns (SendCommandResponse);
+
+  // Stream real-time output from an agent session.
+  rpc StreamOutput(StreamOutputRequest) returns (stream OutputChunk);
+
+  // Stream action requests that need user approval.
+  rpc StreamActions(StreamActionsRequest) returns (stream ActionRequest);
+
+  // Respond to an action request (approve/reject).
+  rpc RespondToAction(ActionResponse) returns (RespondToActionResponse);
+
+  // Get the current status of a session.
+  rpc GetSessionStatus(GetSessionStatusRequest) returns (SessionInfo);
+}
+
+// --- Request / Response messages ---
+
+message StartSessionRequest {
+  AgentProvider provider = 1;
+  string working_directory = 2;
+  string initial_prompt = 3;
+}
+
+message StartSessionResponse {
+  SessionInfo session = 1;
+}
+
+message StopSessionRequest {
+  string session_id = 1;
+}
+
+message StopSessionResponse {}
+
+message ListSessionsRequest {}
+
+message ListSessionsResponse {
+  repeated SessionInfo sessions = 1;
+}
+
+message SendCommandRequest {
+  string session_id = 1;
+  string command = 2;
+}
+
+message SendCommandResponse {}
+
+message StreamOutputRequest {
+  string session_id = 1;
+}
+
+message StreamActionsRequest {
+  string session_id = 1;
+}
+
+message RespondToActionResponse {}
+
+message GetSessionStatusRequest {
+  string session_id = 1;
+}

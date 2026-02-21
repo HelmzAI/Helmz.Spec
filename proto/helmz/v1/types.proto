@@ -1,0 +1,86 @@
+syntax = "proto3";
+
+package helmz.v1;
+
+option csharp_namespace = "Helmz.Spec.V1";
+
+import "google/protobuf/timestamp.proto";
+
+// Identifies an active agent session on the daemon.
+message SessionInfo {
+  string session_id = 1;
+  AgentProvider provider = 2;
+  SessionState state = 3;
+  google.protobuf.Timestamp created_at = 4;
+  string working_directory = 5;
+}
+
+// Supported AI agent providers.
+enum AgentProvider {
+  AGENT_PROVIDER_UNSPECIFIED = 0;
+  AGENT_PROVIDER_CLAUDE_CODE = 1;
+  AGENT_PROVIDER_CODEX = 2;
+  AGENT_PROVIDER_GEMINI = 3;
+}
+
+// Lifecycle state of a session.
+enum SessionState {
+  SESSION_STATE_UNSPECIFIED = 0;
+  SESSION_STATE_STARTING = 1;
+  SESSION_STATE_RUNNING = 2;
+  SESSION_STATE_WAITING_FOR_INPUT = 3;
+  SESSION_STATE_WAITING_FOR_APPROVAL = 4;
+  SESSION_STATE_COMPLETED = 5;
+  SESSION_STATE_FAILED = 6;
+}
+
+// A chunk of output from the agent process.
+message OutputChunk {
+  string session_id = 1;
+  OutputType type = 2;
+  string content = 3;
+  google.protobuf.Timestamp timestamp = 4;
+}
+
+enum OutputType {
+  OUTPUT_TYPE_UNSPECIFIED = 0;
+  OUTPUT_TYPE_STDOUT = 1;
+  OUTPUT_TYPE_STDERR = 2;
+  OUTPUT_TYPE_TOOL_USE = 3;
+  OUTPUT_TYPE_THINKING = 4;
+}
+
+// An action the agent wants to perform that requires user approval.
+message ActionRequest {
+  string session_id = 1;
+  string action_id = 2;
+  ActionType type = 3;
+  string description = 4;
+  string file_path = 5;
+  string diff = 6;
+  google.protobuf.Timestamp timestamp = 7;
+}
+
+enum ActionType {
+  ACTION_TYPE_UNSPECIFIED = 0;
+  ACTION_TYPE_FILE_EDIT = 1;
+  ACTION_TYPE_FILE_CREATE = 2;
+  ACTION_TYPE_FILE_DELETE = 3;
+  ACTION_TYPE_COMMAND_EXECUTE = 4;
+  ACTION_TYPE_TOOL_USE = 5;
+}
+
+// User's response to an action request.
+message ActionResponse {
+  string session_id = 1;
+  string action_id = 2;
+  ActionDecision decision = 3;
+  string feedback = 4;
+}
+
+enum ActionDecision {
+  ACTION_DECISION_UNSPECIFIED = 0;
+  ACTION_DECISION_APPROVE = 1;
+  ACTION_DECISION_REJECT = 2;
+  ACTION_DECISION_APPROVE_ALL = 3;
+}
