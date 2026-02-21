@@ -6,4 +6,11 @@
     <PackageReference Include="Google.Protobuf" />
     <PackageReference Include="Grpc.Core.Api" />
   </ItemGroup>
+
+  <!-- Run buf generate before build to produce C# from proto files -->
+  <Target Name="BufGenerate" BeforeTargets="BeforeCompile"
+          Inputs="$(MSBuildThisFileDirectory)..\..\proto\helmz\v1\*.proto"
+          Outputs="$(MSBuildThisFileDirectory)*.cs">
+    <Exec Command="buf generate" WorkingDirectory="$(MSBuildThisFileDirectory)..\.." />
+  </Target>
 </Project>
