@@ -6,9 +6,18 @@ option csharp_namespace = "Helmz.Spec.V1";
 
 import "helmz/v1/types.proto";
 
-// DaemonService is the gRPC interface exposed by the Helmz PC daemon.
-// It provides full control over AI coding agent sessions.
+// DaemonService defines the application-layer protocol for controlling
+// AI coding agent sessions on the PC daemon.
+//
+// These are NOT direct gRPC calls over the network. They are serialized as
+// protobuf, encrypted, and sent through the relay tunnel. The daemon
+// deserializes and executes them locally. See tunnel.proto for the framing.
+//
+// For local development, the daemon MAY also expose this as a real gRPC server.
 service DaemonService {
+  // Get information about this daemon (version, OS, capabilities).
+  rpc GetDaemonInfo(GetDaemonInfoRequest) returns (GetDaemonInfoResponse);
+
   // Start a new agent session in the specified working directory.
   rpc StartSession(StartSessionRequest) returns (StartSessionResponse);
 
@@ -22,19 +31,34 @@ service DaemonService {
   rpc SendCommand(SendCommandRequest) returns (SendCommandResponse);
 
   // Stream real-time output from an agent session.
-  rpc StreamOutput(StreamOutputRequest) returns (stream OutputChunk);
+  rpc StreamOutput(StreamOutputRequest) returns (stream StreamOutputResponse);
 
   // Stream action requests that need user approval.
-  rpc StreamActions(StreamActionsRequest) returns (stream ActionRequest);
+  rpc StreamActions(StreamActionsRequest) returns (stream StreamActionsResponse);
 
   // Respond to an action request (approve/reject).
-  rpc RespondToAction(ActionResponse) returns (RespondToActionResponse);
+  rpc RespondToAction(RespondToActionRequest) returns (RespondToActionResponse);
 
   // Get the current status of a session.
-  rpc GetSessionStatus(GetSessionStatusRequest) returns (SessionInfo);
+  rpc GetSessionStatus(GetSessionStatusRequest) returns (GetSessionStatusResponse);
 }
 
-// --- Request / Response messages ---
+// --- Daemon info ---
+
+message GetDaemonInfoRequest {}
+
+message GetDaemonInfoResponse {
+  // Daemon software version (e.g. "1.0.0").
+  string version = 1;
+  // Operating system (e.g. "Windows 11", "macOS 15.3", "Ubuntu 24.04").
+  string os = 2;
+  // Machine hostname.
+  string hostname = 3;
+  // Which agent providers are installed and available.
+  repeated AgentProvider available_providers = 4;
+}
+
+// --- Session management ---
 
 message StartSessionRequest {
   AgentProvider provider = 1;
@@ -58,6 +82,8 @@ message ListSessionsResponse {
   repeated SessionInfo sessions = 1;
 }
 
+// --- Commands ---
+
 message SendCommandRequest {
   string session_id = 1;
   string command = 2;
@@ -65,16 +91,38 @@ message SendCommandRequest {
 
 message SendCommandResponse {}
 
+// --- Streaming ---
+
 message StreamOutputRequest {
   string session_id = 1;
+}
+
+message StreamOutputResponse {
+  OutputChunk chunk = 1;
 }
 
 message StreamActionsRequest {
   string session_id = 1;
 }
 
+message StreamActionsResponse {
+  ActionRequest action = 1;
+}
+
+// --- Action response ---
+
+message RespondToActionRequest {
+  ActionResponse action_response = 1;
+}
+
 message RespondToActionResponse {}
+
+// --- Status ---
 
 message GetSessionStatusRequest {
   string session_id = 1;
+}
+
+message GetSessionStatusResponse {
+  SessionInfo session = 1;
 }
