@@ -9,8 +9,11 @@ using grpc = global::Grpc.Core;
 
 namespace Helmz.Spec.V1 {
   /// <summary>
-  /// RelayService handles pairing and room-based routing between
-  /// the mobile client and PC daemon through the relay server.
+  /// RelayService is the gRPC server that both the mobile client and PC daemon
+  /// connect to. It handles one-time pairing and persistent presence-based routing.
+  ///
+  /// Auth + subscription are enforced via gRPC metadata interceptors before any
+  /// RPC handler runs. The relay never sees plaintext tunnel traffic.
   /// </summary>
   public static partial class RelayService
   {
@@ -50,39 +53,41 @@ namespace Helmz.Spec.V1 {
     }
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Helmz.Spec.V1.CreateRoomRequest> __Marshaller_helmz_v1_CreateRoomRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Helmz.Spec.V1.CreateRoomRequest.Parser));
+    static readonly grpc::Marshaller<global::Helmz.Spec.V1.CreatePairCodeRequest> __Marshaller_helmz_v1_CreatePairCodeRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Helmz.Spec.V1.CreatePairCodeRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Helmz.Spec.V1.CreateRoomResponse> __Marshaller_helmz_v1_CreateRoomResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Helmz.Spec.V1.CreateRoomResponse.Parser));
+    static readonly grpc::Marshaller<global::Helmz.Spec.V1.CreatePairCodeResponse> __Marshaller_helmz_v1_CreatePairCodeResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Helmz.Spec.V1.CreatePairCodeResponse.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Helmz.Spec.V1.JoinRoomRequest> __Marshaller_helmz_v1_JoinRoomRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Helmz.Spec.V1.JoinRoomRequest.Parser));
+    static readonly grpc::Marshaller<global::Helmz.Spec.V1.RedeemPairCodeRequest> __Marshaller_helmz_v1_RedeemPairCodeRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Helmz.Spec.V1.RedeemPairCodeRequest.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Helmz.Spec.V1.JoinRoomResponse> __Marshaller_helmz_v1_JoinRoomResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Helmz.Spec.V1.JoinRoomResponse.Parser));
+    static readonly grpc::Marshaller<global::Helmz.Spec.V1.RedeemPairCodeResponse> __Marshaller_helmz_v1_RedeemPairCodeResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Helmz.Spec.V1.RedeemPairCodeResponse.Parser));
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Marshaller<global::Helmz.Spec.V1.TunnelMessage> __Marshaller_helmz_v1_TunnelMessage = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Helmz.Spec.V1.TunnelMessage.Parser));
+    static readonly grpc::Marshaller<global::Helmz.Spec.V1.ConnectRequest> __Marshaller_helmz_v1_ConnectRequest = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Helmz.Spec.V1.ConnectRequest.Parser));
+    [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
+    static readonly grpc::Marshaller<global::Helmz.Spec.V1.ConnectResponse> __Marshaller_helmz_v1_ConnectResponse = grpc::Marshallers.Create(__Helper_SerializeMessage, context => __Helper_DeserializeMessage(context, global::Helmz.Spec.V1.ConnectResponse.Parser));
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::Helmz.Spec.V1.CreateRoomRequest, global::Helmz.Spec.V1.CreateRoomResponse> __Method_CreateRoom = new grpc::Method<global::Helmz.Spec.V1.CreateRoomRequest, global::Helmz.Spec.V1.CreateRoomResponse>(
+    static readonly grpc::Method<global::Helmz.Spec.V1.CreatePairCodeRequest, global::Helmz.Spec.V1.CreatePairCodeResponse> __Method_CreatePairCode = new grpc::Method<global::Helmz.Spec.V1.CreatePairCodeRequest, global::Helmz.Spec.V1.CreatePairCodeResponse>(
         grpc::MethodType.Unary,
         __ServiceName,
-        "CreateRoom",
-        __Marshaller_helmz_v1_CreateRoomRequest,
-        __Marshaller_helmz_v1_CreateRoomResponse);
+        "CreatePairCode",
+        __Marshaller_helmz_v1_CreatePairCodeRequest,
+        __Marshaller_helmz_v1_CreatePairCodeResponse);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::Helmz.Spec.V1.JoinRoomRequest, global::Helmz.Spec.V1.JoinRoomResponse> __Method_JoinRoom = new grpc::Method<global::Helmz.Spec.V1.JoinRoomRequest, global::Helmz.Spec.V1.JoinRoomResponse>(
+    static readonly grpc::Method<global::Helmz.Spec.V1.RedeemPairCodeRequest, global::Helmz.Spec.V1.RedeemPairCodeResponse> __Method_RedeemPairCode = new grpc::Method<global::Helmz.Spec.V1.RedeemPairCodeRequest, global::Helmz.Spec.V1.RedeemPairCodeResponse>(
         grpc::MethodType.Unary,
         __ServiceName,
-        "JoinRoom",
-        __Marshaller_helmz_v1_JoinRoomRequest,
-        __Marshaller_helmz_v1_JoinRoomResponse);
+        "RedeemPairCode",
+        __Marshaller_helmz_v1_RedeemPairCodeRequest,
+        __Marshaller_helmz_v1_RedeemPairCodeResponse);
 
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-    static readonly grpc::Method<global::Helmz.Spec.V1.TunnelMessage, global::Helmz.Spec.V1.TunnelMessage> __Method_Tunnel = new grpc::Method<global::Helmz.Spec.V1.TunnelMessage, global::Helmz.Spec.V1.TunnelMessage>(
+    static readonly grpc::Method<global::Helmz.Spec.V1.ConnectRequest, global::Helmz.Spec.V1.ConnectResponse> __Method_Connect = new grpc::Method<global::Helmz.Spec.V1.ConnectRequest, global::Helmz.Spec.V1.ConnectResponse>(
         grpc::MethodType.DuplexStreaming,
         __ServiceName,
-        "Tunnel",
-        __Marshaller_helmz_v1_TunnelMessage,
-        __Marshaller_helmz_v1_TunnelMessage);
+        "Connect",
+        __Marshaller_helmz_v1_ConnectRequest,
+        __Marshaller_helmz_v1_ConnectResponse);
 
     /// <summary>Service descriptor</summary>
     public static global::Google.Protobuf.Reflection.ServiceDescriptor Descriptor
@@ -95,39 +100,44 @@ namespace Helmz.Spec.V1 {
     public abstract partial class RelayServiceBase
     {
       /// <summary>
-      /// Create a new room and get a pair code for the mobile client.
+      /// Daemon calls this to generate a short-lived pair code (displayed as QR or text).
       /// </summary>
       /// <param name="request">The request received from the client.</param>
       /// <param name="context">The context of the server-side call handler being invoked.</param>
       /// <returns>The response to send back to the client (wrapped by a task).</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::System.Threading.Tasks.Task<global::Helmz.Spec.V1.CreateRoomResponse> CreateRoom(global::Helmz.Spec.V1.CreateRoomRequest request, grpc::ServerCallContext context)
+      public virtual global::System.Threading.Tasks.Task<global::Helmz.Spec.V1.CreatePairCodeResponse> CreatePairCode(global::Helmz.Spec.V1.CreatePairCodeRequest request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
 
       /// <summary>
-      /// Join an existing room using a pair code.
+      /// Mobile redeems the pair code to establish a permanent device pairing.
+      /// Returns the daemon's device_id. Both sides then store the pairing locally.
       /// </summary>
       /// <param name="request">The request received from the client.</param>
       /// <param name="context">The context of the server-side call handler being invoked.</param>
       /// <returns>The response to send back to the client (wrapped by a task).</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::System.Threading.Tasks.Task<global::Helmz.Spec.V1.JoinRoomResponse> JoinRoom(global::Helmz.Spec.V1.JoinRoomRequest request, grpc::ServerCallContext context)
+      public virtual global::System.Threading.Tasks.Task<global::Helmz.Spec.V1.RedeemPairCodeResponse> RedeemPairCode(global::Helmz.Spec.V1.RedeemPairCodeRequest request, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
 
       /// <summary>
-      /// Bidirectional stream for exchanging encrypted messages through the relay.
-      /// The relay cannot read the contents — it just routes blobs by room.
+      /// Both daemon and mobile call this to open a persistent tunnel.
+      /// The relay matches paired devices by device_id and bridges their streams.
+      /// On disconnect, just call Connect again — the relay re-routes automatically.
+      ///
+      /// The first ConnectRequest MUST have the register field set.
+      /// Subsequent messages carry encrypted payloads routed to the paired device.
       /// </summary>
       /// <param name="requestStream">Used for reading requests from the client.</param>
       /// <param name="responseStream">Used for sending responses back to the client.</param>
       /// <param name="context">The context of the server-side call handler being invoked.</param>
       /// <returns>A task indicating completion of the handler.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::System.Threading.Tasks.Task Tunnel(grpc::IAsyncStreamReader<global::Helmz.Spec.V1.TunnelMessage> requestStream, grpc::IServerStreamWriter<global::Helmz.Spec.V1.TunnelMessage> responseStream, grpc::ServerCallContext context)
+      public virtual global::System.Threading.Tasks.Task Connect(grpc::IAsyncStreamReader<global::Helmz.Spec.V1.ConnectRequest> requestStream, grpc::IServerStreamWriter<global::Helmz.Spec.V1.ConnectResponse> responseStream, grpc::ServerCallContext context)
       {
         throw new grpc::RpcException(new grpc::Status(grpc::StatusCode.Unimplemented, ""));
       }
@@ -162,7 +172,7 @@ namespace Helmz.Spec.V1 {
       }
 
       /// <summary>
-      /// Create a new room and get a pair code for the mobile client.
+      /// Daemon calls this to generate a short-lived pair code (displayed as QR or text).
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -170,23 +180,23 @@ namespace Helmz.Spec.V1 {
       /// <param name="cancellationToken">An optional token for canceling the call.</param>
       /// <returns>The response received from the server.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Helmz.Spec.V1.CreateRoomResponse CreateRoom(global::Helmz.Spec.V1.CreateRoomRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual global::Helmz.Spec.V1.CreatePairCodeResponse CreatePairCode(global::Helmz.Spec.V1.CreatePairCodeRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
-        return CreateRoom(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+        return CreatePairCode(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      /// Create a new room and get a pair code for the mobile client.
+      /// Daemon calls this to generate a short-lived pair code (displayed as QR or text).
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
       /// <returns>The response received from the server.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Helmz.Spec.V1.CreateRoomResponse CreateRoom(global::Helmz.Spec.V1.CreateRoomRequest request, grpc::CallOptions options)
+      public virtual global::Helmz.Spec.V1.CreatePairCodeResponse CreatePairCode(global::Helmz.Spec.V1.CreatePairCodeRequest request, grpc::CallOptions options)
       {
-        return CallInvoker.BlockingUnaryCall(__Method_CreateRoom, null, options, request);
+        return CallInvoker.BlockingUnaryCall(__Method_CreatePairCode, null, options, request);
       }
       /// <summary>
-      /// Create a new room and get a pair code for the mobile client.
+      /// Daemon calls this to generate a short-lived pair code (displayed as QR or text).
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -194,23 +204,24 @@ namespace Helmz.Spec.V1 {
       /// <param name="cancellationToken">An optional token for canceling the call.</param>
       /// <returns>The call object.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Helmz.Spec.V1.CreateRoomResponse> CreateRoomAsync(global::Helmz.Spec.V1.CreateRoomRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncUnaryCall<global::Helmz.Spec.V1.CreatePairCodeResponse> CreatePairCodeAsync(global::Helmz.Spec.V1.CreatePairCodeRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
-        return CreateRoomAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+        return CreatePairCodeAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      /// Create a new room and get a pair code for the mobile client.
+      /// Daemon calls this to generate a short-lived pair code (displayed as QR or text).
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
       /// <returns>The call object.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Helmz.Spec.V1.CreateRoomResponse> CreateRoomAsync(global::Helmz.Spec.V1.CreateRoomRequest request, grpc::CallOptions options)
+      public virtual grpc::AsyncUnaryCall<global::Helmz.Spec.V1.CreatePairCodeResponse> CreatePairCodeAsync(global::Helmz.Spec.V1.CreatePairCodeRequest request, grpc::CallOptions options)
       {
-        return CallInvoker.AsyncUnaryCall(__Method_CreateRoom, null, options, request);
+        return CallInvoker.AsyncUnaryCall(__Method_CreatePairCode, null, options, request);
       }
       /// <summary>
-      /// Join an existing room using a pair code.
+      /// Mobile redeems the pair code to establish a permanent device pairing.
+      /// Returns the daemon's device_id. Both sides then store the pairing locally.
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -218,23 +229,25 @@ namespace Helmz.Spec.V1 {
       /// <param name="cancellationToken">An optional token for canceling the call.</param>
       /// <returns>The response received from the server.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Helmz.Spec.V1.JoinRoomResponse JoinRoom(global::Helmz.Spec.V1.JoinRoomRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual global::Helmz.Spec.V1.RedeemPairCodeResponse RedeemPairCode(global::Helmz.Spec.V1.RedeemPairCodeRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
-        return JoinRoom(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+        return RedeemPairCode(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      /// Join an existing room using a pair code.
+      /// Mobile redeems the pair code to establish a permanent device pairing.
+      /// Returns the daemon's device_id. Both sides then store the pairing locally.
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
       /// <returns>The response received from the server.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual global::Helmz.Spec.V1.JoinRoomResponse JoinRoom(global::Helmz.Spec.V1.JoinRoomRequest request, grpc::CallOptions options)
+      public virtual global::Helmz.Spec.V1.RedeemPairCodeResponse RedeemPairCode(global::Helmz.Spec.V1.RedeemPairCodeRequest request, grpc::CallOptions options)
       {
-        return CallInvoker.BlockingUnaryCall(__Method_JoinRoom, null, options, request);
+        return CallInvoker.BlockingUnaryCall(__Method_RedeemPairCode, null, options, request);
       }
       /// <summary>
-      /// Join an existing room using a pair code.
+      /// Mobile redeems the pair code to establish a permanent device pairing.
+      /// Returns the daemon's device_id. Both sides then store the pairing locally.
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
@@ -242,44 +255,53 @@ namespace Helmz.Spec.V1 {
       /// <param name="cancellationToken">An optional token for canceling the call.</param>
       /// <returns>The call object.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Helmz.Spec.V1.JoinRoomResponse> JoinRoomAsync(global::Helmz.Spec.V1.JoinRoomRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncUnaryCall<global::Helmz.Spec.V1.RedeemPairCodeResponse> RedeemPairCodeAsync(global::Helmz.Spec.V1.RedeemPairCodeRequest request, grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
-        return JoinRoomAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
+        return RedeemPairCodeAsync(request, new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      /// Join an existing room using a pair code.
+      /// Mobile redeems the pair code to establish a permanent device pairing.
+      /// Returns the daemon's device_id. Both sides then store the pairing locally.
       /// </summary>
       /// <param name="request">The request to send to the server.</param>
       /// <param name="options">The options for the call.</param>
       /// <returns>The call object.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncUnaryCall<global::Helmz.Spec.V1.JoinRoomResponse> JoinRoomAsync(global::Helmz.Spec.V1.JoinRoomRequest request, grpc::CallOptions options)
+      public virtual grpc::AsyncUnaryCall<global::Helmz.Spec.V1.RedeemPairCodeResponse> RedeemPairCodeAsync(global::Helmz.Spec.V1.RedeemPairCodeRequest request, grpc::CallOptions options)
       {
-        return CallInvoker.AsyncUnaryCall(__Method_JoinRoom, null, options, request);
+        return CallInvoker.AsyncUnaryCall(__Method_RedeemPairCode, null, options, request);
       }
       /// <summary>
-      /// Bidirectional stream for exchanging encrypted messages through the relay.
-      /// The relay cannot read the contents — it just routes blobs by room.
+      /// Both daemon and mobile call this to open a persistent tunnel.
+      /// The relay matches paired devices by device_id and bridges their streams.
+      /// On disconnect, just call Connect again — the relay re-routes automatically.
+      ///
+      /// The first ConnectRequest MUST have the register field set.
+      /// Subsequent messages carry encrypted payloads routed to the paired device.
       /// </summary>
       /// <param name="headers">The initial metadata to send with the call. This parameter is optional.</param>
       /// <param name="deadline">An optional deadline for the call. The call will be cancelled if deadline is hit.</param>
       /// <param name="cancellationToken">An optional token for canceling the call.</param>
       /// <returns>The call object.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncDuplexStreamingCall<global::Helmz.Spec.V1.TunnelMessage, global::Helmz.Spec.V1.TunnelMessage> Tunnel(grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
+      public virtual grpc::AsyncDuplexStreamingCall<global::Helmz.Spec.V1.ConnectRequest, global::Helmz.Spec.V1.ConnectResponse> Connect(grpc::Metadata headers = null, global::System.DateTime? deadline = null, global::System.Threading.CancellationToken cancellationToken = default(global::System.Threading.CancellationToken))
       {
-        return Tunnel(new grpc::CallOptions(headers, deadline, cancellationToken));
+        return Connect(new grpc::CallOptions(headers, deadline, cancellationToken));
       }
       /// <summary>
-      /// Bidirectional stream for exchanging encrypted messages through the relay.
-      /// The relay cannot read the contents — it just routes blobs by room.
+      /// Both daemon and mobile call this to open a persistent tunnel.
+      /// The relay matches paired devices by device_id and bridges their streams.
+      /// On disconnect, just call Connect again — the relay re-routes automatically.
+      ///
+      /// The first ConnectRequest MUST have the register field set.
+      /// Subsequent messages carry encrypted payloads routed to the paired device.
       /// </summary>
       /// <param name="options">The options for the call.</param>
       /// <returns>The call object.</returns>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
-      public virtual grpc::AsyncDuplexStreamingCall<global::Helmz.Spec.V1.TunnelMessage, global::Helmz.Spec.V1.TunnelMessage> Tunnel(grpc::CallOptions options)
+      public virtual grpc::AsyncDuplexStreamingCall<global::Helmz.Spec.V1.ConnectRequest, global::Helmz.Spec.V1.ConnectResponse> Connect(grpc::CallOptions options)
       {
-        return CallInvoker.AsyncDuplexStreamingCall(__Method_Tunnel, null, options);
+        return CallInvoker.AsyncDuplexStreamingCall(__Method_Connect, null, options);
       }
       /// <summary>Creates a new instance of client from given <c>ClientBaseConfiguration</c>.</summary>
       [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
@@ -295,9 +317,9 @@ namespace Helmz.Spec.V1 {
     public static grpc::ServerServiceDefinition BindService(RelayServiceBase serviceImpl)
     {
       return grpc::ServerServiceDefinition.CreateBuilder()
-          .AddMethod(__Method_CreateRoom, serviceImpl.CreateRoom)
-          .AddMethod(__Method_JoinRoom, serviceImpl.JoinRoom)
-          .AddMethod(__Method_Tunnel, serviceImpl.Tunnel).Build();
+          .AddMethod(__Method_CreatePairCode, serviceImpl.CreatePairCode)
+          .AddMethod(__Method_RedeemPairCode, serviceImpl.RedeemPairCode)
+          .AddMethod(__Method_Connect, serviceImpl.Connect).Build();
     }
 
     /// <summary>Register service method with a service binder with or without implementation. Useful when customizing the service binding logic.
@@ -307,9 +329,9 @@ namespace Helmz.Spec.V1 {
     [global::System.CodeDom.Compiler.GeneratedCode("grpc_csharp_plugin", null)]
     public static void BindService(grpc::ServiceBinderBase serviceBinder, RelayServiceBase serviceImpl)
     {
-      serviceBinder.AddMethod(__Method_CreateRoom, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Helmz.Spec.V1.CreateRoomRequest, global::Helmz.Spec.V1.CreateRoomResponse>(serviceImpl.CreateRoom));
-      serviceBinder.AddMethod(__Method_JoinRoom, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Helmz.Spec.V1.JoinRoomRequest, global::Helmz.Spec.V1.JoinRoomResponse>(serviceImpl.JoinRoom));
-      serviceBinder.AddMethod(__Method_Tunnel, serviceImpl == null ? null : new grpc::DuplexStreamingServerMethod<global::Helmz.Spec.V1.TunnelMessage, global::Helmz.Spec.V1.TunnelMessage>(serviceImpl.Tunnel));
+      serviceBinder.AddMethod(__Method_CreatePairCode, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Helmz.Spec.V1.CreatePairCodeRequest, global::Helmz.Spec.V1.CreatePairCodeResponse>(serviceImpl.CreatePairCode));
+      serviceBinder.AddMethod(__Method_RedeemPairCode, serviceImpl == null ? null : new grpc::UnaryServerMethod<global::Helmz.Spec.V1.RedeemPairCodeRequest, global::Helmz.Spec.V1.RedeemPairCodeResponse>(serviceImpl.RedeemPairCode));
+      serviceBinder.AddMethod(__Method_Connect, serviceImpl == null ? null : new grpc::DuplexStreamingServerMethod<global::Helmz.Spec.V1.ConnectRequest, global::Helmz.Spec.V1.ConnectResponse>(serviceImpl.Connect));
     }
 
   }

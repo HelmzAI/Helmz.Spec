@@ -6,43 +6,121 @@ option csharp_namespace = "Helmz.Spec.V1";
 
 import "google/protobuf/timestamp.proto";
 
-// RelayService handles pairing and room-based routing between
-// the mobile client and PC daemon through the relay server.
+// RelayService is the gRPC server that both the mobile client and PC daemon
+// connect to. It handles one-time pairing and persistent presence-based routing.
+//
+// Auth + subscription are enforced via gRPC metadata interceptors before any
+// RPC handler runs. The relay never sees plaintext tunnel traffic.
 service RelayService {
-  // Create a new room and get a pair code for the mobile client.
-  rpc CreateRoom(CreateRoomRequest) returns (CreateRoomResponse);
+  // --- One-time pairing flow ---
 
-  // Join an existing room using a pair code.
-  rpc JoinRoom(JoinRoomRequest) returns (JoinRoomResponse);
+  // Daemon calls this to generate a short-lived pair code (displayed as QR or text).
+  rpc CreatePairCode(CreatePairCodeRequest) returns (CreatePairCodeResponse);
 
-  // Bidirectional stream for exchanging encrypted messages through the relay.
-  // The relay cannot read the contents — it just routes blobs by room.
-  rpc Tunnel(stream TunnelMessage) returns (stream TunnelMessage);
+  // Mobile redeems the pair code to establish a permanent device pairing.
+  // Returns the daemon's device_id. Both sides then store the pairing locally.
+  rpc RedeemPairCode(RedeemPairCodeRequest) returns (RedeemPairCodeResponse);
+
+  // --- Persistent connection ---
+
+  // Both daemon and mobile call this to open a persistent tunnel.
+  // The relay matches paired devices by device_id and bridges their streams.
+  // On disconnect, just call Connect again — the relay re-routes automatically.
+  //
+  // The first ConnectRequest MUST have the register field set.
+  // Subsequent messages carry encrypted payloads routed to the paired device.
+  rpc Connect(stream ConnectRequest) returns (stream ConnectResponse);
 }
 
-message CreateRoomRequest {
-  string daemon_id = 1;
+// --- Pairing messages ---
+
+message CreatePairCodeRequest {
+  // Unique identifier for this daemon instance.
+  string device_id = 1;
+  // Human-readable name for the device (e.g. "Work Laptop", "Home Desktop").
+  string device_name = 2;
 }
 
-message CreateRoomResponse {
-  string room_id = 1;
-  string pair_code = 2;
-  google.protobuf.Timestamp expires_at = 3;
-}
-
-message JoinRoomRequest {
+message CreatePairCodeResponse {
+  // Short alphanumeric code for manual entry (e.g. "A7K-3MX").
   string pair_code = 1;
+  // When the pair code expires. Typically 5 minutes.
+  google.protobuf.Timestamp expires_at = 2;
+  // Full URI for QR code encoding (e.g. "helmz://pair?code=A7K3MX&relay=us-east-1.helmz.io").
+  string qr_uri = 3;
 }
 
-message JoinRoomResponse {
-  string room_id = 1;
-  string daemon_id = 2;
+message RedeemPairCodeRequest {
+  // The pair code from the daemon's QR/display.
+  string pair_code = 1;
+  // The mobile device's unique identifier.
+  string device_id = 2;
+  // Human-readable name for the mobile device.
+  string device_name = 3;
 }
 
-// An encrypted message routed through the relay.
-// The relay sees only the room_id and opaque payload.
-message TunnelMessage {
-  string room_id = 1;
-  bytes payload = 2;
+message RedeemPairCodeResponse {
+  // The daemon's device_id — store this locally for all future connections.
+  string daemon_device_id = 1;
+  // The daemon's human-readable name.
+  string daemon_device_name = 2;
+}
+
+// --- Tunnel messages ---
+
+// Registration payload sent as the first message in the Register stream.
+message RegisterInfo {
+  // This device's unique identifier.
+  string device_id = 1;
+  // The paired device's identifier to connect to.
+  string paired_device_id = 2;
+  // Role of this device in the pairing.
+  DeviceRole role = 3;
+}
+
+enum DeviceRole {
+  DEVICE_ROLE_UNSPECIFIED = 0;
+  DEVICE_ROLE_DAEMON = 1;
+  DEVICE_ROLE_MOBILE = 2;
+}
+
+// Presence status update pushed by the relay to inform a device about
+// its paired device's connectivity state.
+message PresenceUpdate {
+  string device_id = 1;
+  PresenceState state = 2;
   google.protobuf.Timestamp timestamp = 3;
+}
+
+enum PresenceState {
+  PRESENCE_STATE_UNSPECIFIED = 0;
+  PRESENCE_STATE_ONLINE = 1;
+  PRESENCE_STATE_OFFLINE = 2;
+}
+
+// Client → relay message.
+// First message must have register set. Subsequent messages carry encrypted payloads.
+message ConnectRequest {
+  oneof content {
+    // First message: register this device with the relay.
+    RegisterInfo register = 1;
+    // Encrypted application data routed to the paired device.
+    bytes payload = 2;
+  }
+  // Monotonically increasing sequence number for ordering and ack.
+  uint64 sequence = 10;
+  google.protobuf.Timestamp timestamp = 11;
+}
+
+// Relay → client message.
+// Carries either encrypted payloads from the paired device or presence updates.
+message ConnectResponse {
+  oneof content {
+    // Encrypted application data from the paired device.
+    bytes payload = 1;
+    // Presence update about the paired device's connectivity.
+    PresenceUpdate presence = 2;
+  }
+  uint64 sequence = 10;
+  google.protobuf.Timestamp timestamp = 11;
 }

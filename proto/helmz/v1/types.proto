@@ -6,6 +6,23 @@ option csharp_namespace = "Helmz.Spec.V1";
 
 import "google/protobuf/timestamp.proto";
 
+// --- Device identity ---
+
+// Persistent device information stored locally after pairing.
+message DeviceInfo {
+  string device_id = 1;
+  string device_name = 2;
+  DeviceType type = 3;
+}
+
+enum DeviceType {
+  DEVICE_TYPE_UNSPECIFIED = 0;
+  DEVICE_TYPE_DAEMON = 1;
+  DEVICE_TYPE_MOBILE = 2;
+}
+
+// --- Agent sessions ---
+
 // Identifies an active agent session on the daemon.
 message SessionInfo {
   string session_id = 1;
@@ -34,6 +51,8 @@ enum SessionState {
   SESSION_STATE_FAILED = 6;
 }
 
+// --- Agent output ---
+
 // A chunk of output from the agent process.
 message OutputChunk {
   string session_id = 1;
@@ -49,6 +68,8 @@ enum OutputType {
   OUTPUT_TYPE_TOOL_USE = 3;
   OUTPUT_TYPE_THINKING = 4;
 }
+
+// --- Agent actions (approval flow) ---
 
 // An action the agent wants to perform that requires user approval.
 message ActionRequest {
