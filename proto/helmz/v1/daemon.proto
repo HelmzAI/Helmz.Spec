@@ -41,6 +41,11 @@ service DaemonService {
 
   // Get the current status of a session.
   rpc GetSessionStatus(GetSessionStatusRequest) returns (GetSessionStatusResponse);
+
+  // Interrupt the current turn without killing the session.
+  // Cancels any in-progress API call, tool execution, or pending approval
+  // and returns the session to WaitingForInput.
+  rpc InterruptTurn(InterruptTurnRequest) returns (InterruptTurnResponse);
 }
 
 // --- Daemon info ---
@@ -64,6 +69,11 @@ message StartSessionRequest {
   AgentProvider provider = 1;
   string working_directory = 2;
   string initial_prompt = 3;
+  // Optional thinking configuration. When set, the agent provider
+  // will enable extended thinking / reasoning for this session.
+  ThinkingConfig thinking = 4;
+  // Optional: override the default model for this session.
+  string model = 5;
 }
 
 message StartSessionResponse {
@@ -87,6 +97,10 @@ message ListSessionsResponse {
 message SendCommandRequest {
   string session_id = 1;
   string command = 2;
+  // Optional: override model for subsequent turns.
+  string model = 3;
+  // Optional: override thinking config for subsequent turns.
+  ThinkingConfig thinking = 4;
 }
 
 message SendCommandResponse {}
@@ -126,3 +140,11 @@ message GetSessionStatusRequest {
 message GetSessionStatusResponse {
   SessionInfo session = 1;
 }
+
+// --- Interrupt ---
+
+message InterruptTurnRequest {
+  string session_id = 1;
+}
+
+message InterruptTurnResponse {}

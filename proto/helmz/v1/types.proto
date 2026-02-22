@@ -105,3 +105,14 @@ enum ActionDecision {
   ACTION_DECISION_REJECT = 2;
   ACTION_DECISION_APPROVE_ALL = 3;
 }
+
+// --- Thinking / reasoning configuration ---
+
+// Provider-agnostic thinking configuration.
+// Each agent provider maps budget_tokens to its native API:
+//   - Claude: "thinking": { "type": "enabled", "budget_tokens": N }
+//   - OpenAI/Codex: mapped to reasoning effort levels
+//   - Providers without thinking support ignore this.
+message ThinkingConfig {
+  int32 budget_tokens = 1;
+}
